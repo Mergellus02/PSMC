@@ -10,6 +10,5 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
 
 
 #Subsample 10000 read pairs from two large paired FASTQ files (remember to use the same random seed to keep pairing):
-
   seqtk sample -s100 read1.fq 10000 > sub1.fq
   seqtk sample -s100 read2.fq 10000 > sub2.fq
