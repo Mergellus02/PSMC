@@ -53,6 +53,10 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
                  ./RWB_5g_1_ref.bam
 
 #sort the filtered bam
+/mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools sort \
+              -o RWB_5g_1_filtered_sorted.bam \
+              -T RWB_5g_1_filtered_temp \
+              ./RWB_5g_1_filtered.bam
 
 
 
