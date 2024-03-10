@@ -23,8 +23,8 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
 /home/app/jre1.8.0_241-amd64/bin/java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
   -phred33 -threads 40 -trimlog bof_trim.log -summary bof_summary.txt \
   /home/jagativishwa/raw/NS_R1.fastq.gz /home/jagativishwa/raw/NS_R2.fastq.gz \
-  NS_R1_paired.fq.gz NS_R1_unpaired.fq.gz \
-  NS_R2_paired.fq.gz NS_R2_unpaired.fq.gz \
+  /home/jagativishwa/raw/NS_R1_paired.fq.gz /home/jagativishwa/raw/NS_R1_unpaired.fq.gz \
+  /home/jagativishwa/raw/NS_R2_paired.fq.gz /home/jagativishwa/raw/NS_R2_unpaired.fq.gz \
   ILLUMINACLIP:/home/jagativishwa/softs/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 
 
