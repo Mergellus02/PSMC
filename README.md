@@ -1,3 +1,9 @@
+#Subsample 10000 read pairs from two large paired FASTQ files (remember to use the same random seed to keep pairing):
+
+  seqtk sample -s100 RWB_R1_paired.fq.gz 17200000 | gzip > RWB_R1_5g_1.fq.gz
+  seqtk sample -s100 RWB_R2_paired.fq.gz 17200000 | gzip > RWB_R2_5g_1.fq.gz
+  
+
 #Trimming
 
 java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
@@ -28,7 +34,24 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
   ILLUMINACLIP:/home/jagativishwa/softs/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 
 
-#Subsample 10000 read pairs from two large paired FASTQ files (remember to use the same random seed to keep pairing):
+#Before we start mapping the data, we need to index the reference
 
-  seqtk sample -s100 RWB_R1_paired.fq.gz 17200000 | gzip > RWB_R1_5g_1.fq.gz
-  seqtk sample -s100 RWB_R2_paired.fq.gz 17200000 | gzip > RWB_R2_5g_1.fq.gz
+/mnt/d/vishwa/psmc/softs/bwa/bwa index /mnt/e/psmc/mapping/RWB/RWB_ref.fna
+
+
+#mapping
+
+/mnt/d/vishwa/psmc/softs/bwa/bwa mem -M -t 16 -R "@RG\tID:JO_30x\tSM:JO_\tLB:IlluminaWGS\tPL:ILLUMINA" \
+/mnt/e/psmc/mapping/RWB/RWB_ref.fna \
+/mnt/e/psmc/RWB/RWB_subsets/5g_1/RWB_R1_5g_1.fq.gz \
+/mnt/e/psmc/RWB/RWB_subsets/5g_1/RWB_R2_5g_1.fq.gz | \
+/mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools view -bh - | \
+/mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools sort -T tmp -o RWB_5g_1_ref.bam
+
+
+
+
+
+
+
+
