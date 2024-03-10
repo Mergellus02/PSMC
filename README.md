@@ -21,7 +21,7 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
 #PBS -M vishwajagati@labs.iisertirupati.ac.in
 
 /home/app/jre1.8.0_241-amd64/bin/java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
-  -phred33 -threads 40 -trimlog bof_trim.log -summary bof_summary.txt \
+  -phred33 -threads 40 -trimlog /home/jagativishwa/raw/NS_trim.log -summary /home/jagativishwa/raw/NS_summary.txt \
   /home/jagativishwa/raw/NS_R1.fastq.gz /home/jagativishwa/raw/NS_R2.fastq.gz \
   /home/jagativishwa/raw/NS_R1_paired.fq.gz /home/jagativishwa/raw/NS_R1_unpaired.fq.gz \
   /home/jagativishwa/raw/NS_R2_paired.fq.gz /home/jagativishwa/raw/NS_R2_unpaired.fq.gz \
