@@ -1,0 +1,275 @@
+> setwd("D:/psmc/psmc_auto/boots/final_text_output")
+> 
+> getwd
+function () 
+.Internal(getwd())
+<bytecode: 0x000001bf3389aef0>
+<environment: namespace:base>
+> getwd()
+[1] "D:/psmc/psmc_auto/boots/final_text_output"
+> library(ggplot2)
+> library(ggpubr)
+> 
+> # Create an empty plot with the desired axes and labels
+> plot <- ggplot() +
++     theme_minimal() +
++     ylim(0, 80) +
++     xlim(2, 700) +
++     scale_x_log10() +
++     labs(
++         y = "Effective Population Size (10^4)",
++         x = "Years ago 10^3",
++         title = ""
++     )
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+> 
+> # Add vertical lines
+> plot <- plot +
++     geom_vline(xintercept = c(6, 22, 120), color = "black")
+> 
+> # Add text labels
+> plot <- plot +
++     annotate("text", x = 119.85, y = 75.18514, label = "LIG", size = 3) +
++     annotate("text", x = 21.63997, y = 75.18514, label = "LGM", size = 3) +
++     annotate("text", x = 5.928641, y = 75.18514, label = "MDH", size = 3)
+> 
+> # Read and plot bootstrap replicates
+> for (i in 0:100) {
++     path <- paste0("RWB_diploid.", i, ".txt")
++     boot.iter <- read.table(path)
++     ya <- boot.iter[-1, 1]
++     ya.pl = ya[which(ya > 4999)]
++     ne <- boot.iter[-1, 2]
++     ne.pl = ne[which(ya > 4999)]
++     
++     plot <- plot +
++         geom_line(
++             aes(x = ya / 1000, y = ne),
++             color = alpha("cornflowerblue", 0.1),
++             size = 0.8
++         )
++ }
+Warning message:
+Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. 
+> 
+> # Read and plot original data
+> jo <- read.table("RWB_diploid.0.txt")
+> jo.ya <- jo[-1, 1]
+> jo.ne <- jo[-1, 2]
+> 
+> plot <- plot +
++     geom_line(
++         aes(x = jo.ya / 1000, y = jo.ne),
++         color = "cornflowerblue",
++         size = 2.5
++     )
+> 
+> # Add legend
+> plot <- plot +
++     labs(color = "RWB") +
++     theme(legend.position = c(0.8, 0.85))
+> 
+> # Print the plot
+> print(plot)
+> 
+> library(ggplot2)
+> library(ggpubr)
+> 
+> # Create an empty plot with the desired axes and labels
+> plot <- ggplot() +
++     theme_minimal() +
++     ylim(0, 80) +
++     xlim(2, 700) +
++     scale_x_log10() +
++     labs(
++         y = "Effective Population Size (10^4)",
++         x = "Years ago 10^3",
++         title = ""
++     )
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+> 
+> # Add vertical lines
+> plot <- plot +
++     geom_vline(xintercept = c(6, 22, 120), color = "black")
+> 
+> # Add text labels
+> plot <- plot +
++     annotate("text", x = 119.85, y = 75.18514, label = "LIG", size = 3) +
++     annotate("text", x = 21.63997, y = 75.18514, label = "LGM", size = 3) +
++     annotate("text", x = 5.928641, y = 75.18514, label = "MDH", size = 3)
+> 
+> # Read and plot bootstrap replicates
+> for (i in 0:100) {
++     path <- paste0("RWB_diploid.", i, ".txt")
++     boot.iter <- read.table(path)
++     ya <- boot.iter[-1, 1]
++     ya.pl = ya[which(ya > 4999)]
++     ne <- boot.iter[-1, 2]
++     ne.pl = ne[which(ya > 4999)]
++     
++     plot <- plot +
++         geom_line(
++             aes(x = ya / 1000, y = ne),
++             color = alpha("cornflowerblue", 0.1),
++             linewidth = 0.8
++         )
++ }
+> 
+> # Read and plot original data
+> jo <- read.table("RWB_diploid.0.txt")
+> jo.ya <- jo[-1, 1]
+> jo.ne <- jo[-1, 2]
+> 
+> plot <- plot +
++     geom_line(
++         aes(x = jo.ya / 1000, y = jo.ne),
++         color = "cornflowerblue",
++         linewidth = 2.5
++     )
+> 
+> # Add legend
+> plot <- plot +
++     labs(color = "RWB") +
++     theme(legend.position = c(0.8, 0.85))
+> 
+> # Print the plot
+> print(plot)
+> 
+> # Read and plot bootstrap replicates
+> for (i in 0:100) {
++     # Construct the file path for each bootstrap replicate
++     path <- paste0("RWB_diploid.", i, ".txt")
++     
++     # Read the data from the bootstrap replicate file
++     boot.iter <- read.table(path)
++     
++     # Extract values from the bootstrap data
++     ya <- boot.iter[-1, 1]
++     ya.pl = ya[which(ya > 4999)]
++     ne <- boot.iter[-1, 2]
++     ne.pl = ne[which(ya > 4999)]
++     
++     # Add a line to the plot for each bootstrap replicate
++     plot <- plot +
++         geom_line(
++             aes(x = ya / 1000, y = ne),
++             color = alpha("cornflowerblue", 0.1),
++             linewidth = 0.8
++         )
++ }
+> 
+> library("ggpubr")
+> 
+> op <- par(family = "serif")
+> 
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,700),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> abline(v=c(6,22,120), col="black")
+> text(119.85,75.18514,"LIG",cex=1.0)
+> text(21.63997,75.18514,"LGM",cex=1.0)
+> text(5.928641,75.18514,"MDH",cex=1.0)
+> for(i in 0:100) {
++     path<-paste0("RWB_diploid.",i,".txt")
++     boot.iter<-read.table(path)
++     ya<-boot.iter[-1,1]
++     ya.pl=ya[which(ya>4999)]
++     ne<-boot.iter[-1,2]
++     ne.pl=ne[which(ya>4999)]
++     lines((ya/1000),ne,xlog=T,type="l",col=alpha("cornflowerblue",0.1),lwd=0.8,ylim=c(0,50))
++ }
+> legend(160, 77, legend=c("RWB"),
++        col=c("coral3""), lty=1, cex=1.0, box.lty=5)
++ RWB = read.table("RWB_diploid.0.txt")
+Error: unexpected string constant in:
+"       col=c("coral3""), lty=1, cex=1.0, box.lty=5)
+RWB = read.table(""
+> legend(160, 77, legend=c("RWB"),
++        col=c("coral3"), lty=1, cex=1.0, box.lty=5)
+> RWB = read.table("RWB_diploid.0.txt")
+> RWB.ya=RWB[-1,1]
+> RWB.ne=RWB[-1,2]
+> #lets plot those extracted values.
+> lines(x=(RWB.ya/1000),y=RWB.ne,type="l",col="coral3",lwd=2.5)
+> #lets plot those extracted values.
+> lines(x=(RWB.ya/1000),y=RWB.ne,type="l",col="blue",lwd=2.5)
+> legend(160, 77, legend=c("RWB"),
++        col=c("blue"), lty=1, cex=1.0, box.lty=5)
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,2000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> abline(v=c(6,22,120), col="black")
+> text(119.85,75.18514,"LIG",cex=1.0)
+> text(21.63997,75.18514,"LGM",cex=1.0)
+> text(5.928641,75.18514,"MDH",cex=1.0)
+> for(i in 0:100) {
++     path<-paste0("RWB_diploid.",i,".txt")
++     boot.iter<-read.table(path)
++     ya<-boot.iter[-1,1]
++     ya.pl=ya[which(ya>4999)]
++     ne<-boot.iter[-1,2]
++     ne.pl=ne[which(ya>4999)]
++     lines((ya/1000),ne,xlog=T,type="l",col=alpha("cornflowerblue",0.1),lwd=0.8,ylim=c(0,50))
++ }
+> legend(160, 77, legend=c("RWB"),
++        col=c("blue"), lty=1, cex=1.0, box.lty=5)
+> RWB = read.table("RWB_diploid.0.txt")
+> RWB.ya=RWB[-1,1]
+> RWB.ne=RWB[-1,2]
+> #lets plot those extracted values.
+> lines(x=(RWB.ya/1000),y=RWB.ne,type="l",col="blue",lwd=2.5)
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,10000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> library("ggpubr")
+> 
+> op <- par(family = "serif")
+> 
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,10000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> library("ggpubr")
+> 
+> op <- par(family = "serif")
+> 
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,10000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> plot(1,1,
++      ylim=c(0,80),xlim=c(50,10000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> plot(1,1,
++      ylim=c(0,80),xlim=c(2,10000),
++      log="x",type="n",
++      main="",ylab="Effective Population Size (10^4)",xlab="Years ago 10^3")
+> abline(v=c(6,22,120), col="black")
+> text(119.85,75.18514,"LIG",cex=1.0)
+> text(21.63997,75.18514,"LGM",cex=1.0)
+> text(5.928641,75.18514,"MDH",cex=1.0)
+> for(i in 0:100) {
++     path<-paste0("RWB_diploid.",i,".txt")
++     boot.iter<-read.table(path)
++     ya<-boot.iter[-1,1]
++     ya.pl=ya[which(ya>4999)]
++     ne<-boot.iter[-1,2]
++     ne.pl=ne[which(ya>4999)]
++     lines((ya/1000),ne,xlog=T,type="l",col=alpha("cornflowerblue",0.1),lwd=0.8,ylim=c(0,50))
++ }
+> legend(160, 77, legend=c("RWB"),
++        col=c("blue"), lty=1, cex=1.0, box.lty=5)
+> RWB = read.table("RWB_diploid.0.txt")
+> RWB.ya=RWB[-1,1]
+> RWB.ne=RWB[-1,2]
+> #lets plot those extracted values.
+> lines(x=(RWB.ya/1000),y=RWB.ne,type="l",col="blue",lwd=2.5)
