@@ -56,7 +56,7 @@ For Windows : https://cran.r-project.org/bin/windows/base/
 
 Now Download R-Studio. R-Studio is an IDE which helps you access R interactively. Alternatively you can use any other IDE like VS Code. Download the R-Studio - https://posit.co/download/rstudio-desktop/
 
-#Install seqtk
+12) Install seqtk
 git clone https://github.com/lh3/seqtk.git;
 cd seqtk; make
 
@@ -74,7 +74,7 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
   ILLUMINACLIP:/home/jagativishwa/softs/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:True LEADING:3 TRAILING:3 MINLEN:36
 
 
-#Sh_trimming (qsub/qdel/qstat/freenodes)
+#Trimming.sh (qsub/qdel/qstat/freenodes)
 #PBS -N trim-1
 #PBS -q iiser
 #PBS -l select=1:ncpus=40,pmem=188
