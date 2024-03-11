@@ -1,0 +1,3 @@
+#bootstrap parallel runs command (8 at a time)
+
+seq 100 | parallel -j 8 "/mnt/d/psmc/softs/psmc/psmc -N25 -t9 -r5 -b -p '26*2+4+7+1' -o RWB_diploid_round-{}.psmc RWB_diploid_split.psmcfa"
