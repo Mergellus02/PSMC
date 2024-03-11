@@ -128,6 +128,11 @@ java -jar -Xmx8g -jar /mnt/d/vishwa/psmc/softs/picard/build/libs/picard.jar Mark
 /mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools index RWB_5g_1_filtered_sorted_rmdup.bam
 
 
+#BAMQC
+/mnt/d/vishwa/psmc/softs/qualimap_v2.3/qualimap bamqc -bam RWB_5g_1_filtered_sorted_rmdup.bam --java-mem-size=4G
+
+
+
 
 
 
