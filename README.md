@@ -1,3 +1,7 @@
+#hpc account_free space
+du -h --max-depth=1
+
+
 Installation of required softwares
 
 1) FastQC
@@ -51,6 +55,10 @@ Download R first - For Machttps://cran.r-project.org/bin/macosx/
 For Windows : https://cran.r-project.org/bin/windows/base/
 
 Now Download R-Studio. R-Studio is an IDE which helps you access R interactively. Alternatively you can use any other IDE like VS Code. Download the R-Studio - https://posit.co/download/rstudio-desktop/
+
+#Install seqtk
+git clone https://github.com/lh3/seqtk.git;
+cd seqtk; make
 
 #Subsample 10000 read pairs from two large paired FASTQ files (remember to use the same random seed to keep pairing):
   seqtk sample -s100 RWB_R1_paired.fq.gz 17200000 | gzip > RWB_R1_5g_1.fq.gz
@@ -132,9 +140,12 @@ java -jar -Xmx8g -jar /mnt/d/vishwa/psmc/softs/picard/build/libs/picard.jar Mark
 /mnt/d/vishwa/psmc/softs/qualimap_v2.3/qualimap bamqc -bam RWB_5g_1_filtered_sorted_rmdup.bam --java-mem-size=4G
 
 
+**#If the ref is not chromosome level, the following are the steps!!
+#Length of each scaffold of the reference file
+/mnt/d/vishwa/psmc/softs/bioawk/bioawk -c fastx '{print ">" $name ORS length($seq)}' RWB_ref.fna | paste - - > length_of_each_scaffold_of_RWB_5g_1_ref.txt
 
-
-
+#01_blastdb
+/mnt/d/vishwa/psmc/softs/ncbi-blast-2.14.1+/bin/makeblastdb -in RWB_ref.fna -parse_seqids -dbtype nucl -out ./ZF_all_chrom.db -blastdb_version 4 > mkblastdb_zf_all.out
 
 
 
