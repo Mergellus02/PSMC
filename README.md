@@ -144,9 +144,96 @@ java -jar -Xmx8g -jar /mnt/d/vishwa/psmc/softs/picard/build/libs/picard.jar Mark
 #Length of each scaffold of the reference file
 /mnt/d/vishwa/psmc/softs/bioawk/bioawk -c fastx '{print ">" $name ORS length($seq)}' RWB_ref.fna | paste - - > length_of_each_scaffold_of_RWB_5g_1_ref.txt
 
-#01_blastdb
-/mnt/d/vishwa/psmc/softs/ncbi-blast-2.14.1+/bin/makeblastdb -in RWB_ref.fna -parse_seqids -dbtype nucl -out ./ZF_all_chrom.db -blastdb_version 4 > mkblastdb_zf_all.out
+#01_blastdb.sh
+/mnt/d/vishwa/psmc/softs/blast-2.14.1/bin/makeblastdb -in RWB_ref.fna -parse_seqids -dbtype nucl -out ./ZF_all_chrom.db -blastdb_version 4 > mkblastdb_zf_all.out
 
+#02_blast_assembly_to_ZF.sh
+/mnt/d/vishwa/psmc/softs/ncbi-blast-2.14.1+/bin/blastn -db sex_chromosomes/ZF_all_chrom.db -query RWB_ref.fna -max_target_seqs 5 -max_hsps 1 -evalue 1e-10 -outfmt "7 qseqid sseqid pident length qcovs qlen qstart qend evalue bitscore" -out ./Blast_RWB_to_ZF_db.out.txt
+
+**03_summarise_Blast.sh
+#TOTAL SCAFFOLDS BLASTED
+
+TOT_SCAFS=`grep "Query" Blast_RWB_to_ZF_db.out.txt | wc -l`
+
+#QUERIES THAT FOUND ONE OR MORE HITS
+
+HIT_SCAFS=`grep -v ^"#" Blast_RWB_to_ZF_db.out.txt | awk '{print $1}' | sort -n | uniq | wc -l`
+
+echo "Total Queries BLASTED is -" ${TOT_SCAFS} "; Queries with at least 1 hit are -" ${HIT_SCAFS} >> Blast_summary.txt
+
+echo "Specifics for queries with hits -" >> Blast_summary.txt
+
+echo "All top hit values are only given for Pident >=80" >> Blast_summary.txt
+
+echo "NC_SCAF" "Q_LEN" "NUM_HITS" "HITS_>80_P-IDENT" "BEST_HIT_By_P-IDENT" "BEST_HIT_By_QCov" "BEST_HIT-BY_QCov_QCov" "BEST_HIT-BY_QCov_LEN" "SAME_BEST_HIT-Y/N" "DIFF_NEXT_BEST_P-IDENT"  >> Blast_summary.txt
+
+# This next bit will be done for each unique query in the concatenated BLAST output file
+
+for SCAF in `cut -f1 Blast_RWB_to_ZF_db.out.txt | grep -v ^"#" | sort -n | uniq`
+do
+	hits=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | wc -l`
+	Qlen=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | cut -f6 | awk 'NR==1'`
+	Hits_80_PI=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | wc -l` 
+        Best_Hit_By_Pident=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | sort -rnk3,3 | awk '{if(NR==1) print $2 }'`
+        Best_Hit_By_QCov=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | sort -rnk5,5 | awk '{if(NR==1) print $2 }'`
+	Best_Hit_By_QCov_QCov=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | sort -rnk5,5 | awk '{if (NR==1) print $5}'`
+	Best_Hit_By_QCov_Len=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | sort -rnk5,5 | awk '{if (NR==1) print $4 }'`
+
+        if [[ $Best_Hit_By_Pident == $Best_Hit_By_QCov ]]; then SAME=Y; else SAME=N; fi
+
+	NEXT_BEST_Pident=`grep -w ^${SCAF} Blast_RWB_to_ZF_db.out.txt | awk '$3>=80' | sort -rnk3,3 | cut -f3 | awk '{if (NR==2) {print $1-a} a=$1}'`
+        echo ${SCAF} ${Qlen} ${hits} ${Hits_80_PI} ${Best_Hit_By_Pident} ${Best_Hit_By_QCov} ${Best_Hit_By_QCov_QCov} ${Best_Hit_By_QCov_Len} ${SAME} ${NEXT_BEST_Pident} >> Blast_summary.txt
+done
+
+
+**#04_query_cover_hit_filter.sh
+awk '$6 ~ /NC_044241.2/ {print $1}' Blast_summary.txt > Blast_scaffolds_list_Z_chr.txt
+
+awk '$6 ~ /NC_045028.1/ {print $1}' Blast_summary.txt > Blast_scaffolds_list_W_chr.txt
+
+cat Blast_scaffolds_list_Z_chr.txt Blast_scaffolds_list_W_chr.txt > Blast_scaffolds_list_ZW_chr.txt
+
+
+**#05_identifying_sex_scaffs.sh
+#to extract the header lines 
+grep -e ">" /Users/vinaykl/EBB/ref/ncbi_dataset/data/GCA_009812075.1/GCA_009812075.1_Ss_LA_1.0_genomic.fna > all_scaffs_header_Ss.txt
+
+#to get only the scaffold name
+cat all_scaffs_header_Ss.txt | awk '{print $1}' > all_scaffs_latest_Ss.txt
+
+#subtract the Z and W hit from overall list
+grep -v -w -f ./Blast_scaffolds_list_ZW_chr.txt all_scaffs_latest_Ss.txt > only_aut_scaff_list.txt
+
+# add scaff length to only aut scaff list
+grep -w -f only_aut_scaff_list.txt length_of_each_scaffold_of_Ss_ref.txt > only_aut_scaffs.txt
+
+# create bed file with only aut chromosomes
+sed 's,\t,\t0\t,' only_aut_scaffs.txt > aut_chrom_scaff_btg.bed
+
+# for removing '>' from the above bed file
+sed 's/^.//' aut_chrom_scaff_RWB.bed > autosomal_chromosome.bed
+
+
+
+**#Identifying sex-linked chromosome_if chromosome level ref
+#Lets get the length of each scaffold of the reference file
+~/soft/bioawk -c fastx '{print ">" $name ORS length($seq)}' ~/PSMC_Tut/mapping/Athene_cunicularia.athCun1.dna.toplevel.fa | paste - - > length_of_each_scaffold_of_ath_cun_ensembl.txt
+
+#Now lets isolate the Z Chromosome scaffolds in to a text file
+less ./GCA_003259725.1_sequence_report.txt| grep 'Chromosome' | grep 'chrZ' > chromosome_scaffolds_Z.txt
+
+#Now lets isolate the Autosomal Chromosome scaffolds in to a text file
+less ./GCA_003259725.1_sequence_report.txt| grep 'Chromosome' | grep -v 'chrZ' > chromosome_scaffolds_aut.txt
+
+#For downstream analysis we need to bed files. Please learn more about bed formats
+
+cut -f1 chromosome_scaffolds_Z.txt | grep -f - length_of_each_scaffold_of_ath_cun_ensembl.txt | sed 's,>,,' | sed 's,\.1,\.1\t0,' > chromosome_scaffolds_Z.bed
+
+cut -f1 chromosome_scaffolds_aut.txt | grep -f - length_of_each_scaffold_of_ath_cun_ensembl.txt | sed 's,>,,' | sed 's,\.1,\.1\t0,' > chromosome_scaffolds_aut.bed
+
+
+#Retain data mapping only to Autosomal chromosomes from the reference
+/mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools view -b -L autosomal_chromosome_RWB.bed RWB_5g_1_filtered_sorted_rmdup.bam > RWB_5g_1_filtered_sorted_rmdup_aut.bam
 
 
 
