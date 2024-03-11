@@ -1,3 +1,57 @@
+Installation of required softwares
+
+1) FastQC
+wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.12.1.zip
+unzip fastqc_v0.12.1.zip
+
+3) Trimmomatic
+wget https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip
+unzip Trimmomatic-0.39.zip
+
+5) Burrows-Wheeler Aligner
+git clone https://github.com/lh3/bwa.git
+cd bwa; make
+
+7) Samtools and htslib suit, You don’t hae to get the htslib separately.
+wget https://github.com/samtools/samtools/releases/download/1.18/samtools-1.18.tar.bz2
+tar -xvzf samtools-1.18.tar.bz2 && cd samtools-1.18
+./configure --prefix=/your/soft/path/name/
+make
+make install
+export PATH="/your/soft/path/name/samtools-1.18/bin:$PATH"
+
+5) Picard Tools
+git clone https://github.com/broadinstitute/picard.git
+cd picard
+./gradlew shadowJar
+
+7) Bioawk
+sudo git clone https://github.com/lh3/bioawk.git
+cd bioawk/
+sudo make
+./bioawk
+
+9) BCFTools
+wget https://github.com/samtools/bcftools/releases/download/1.10.2/bcftools-1.10.2.tar.bz2
+tar -xjvf bcftools-1.10.2.tar.bz2
+cd bcftools-1.10.2
+make
+sudo make prefix=/usr/local/bin install
+sudo ln -s /usr/local/bin/bin/bcftools /usr/bin/bcftools # you don't technically need to do this. And if you aren't a root user you may get a ``permission denied`` message - don't worry about it.
+
+10) PSMC
+git clone https://github.com/lh3/psmc.git
+cd psmc
+make
+cd utils
+make
+
+11) R and R-Studio
+Download R first - For Machttps://cran.r-project.org/bin/macosx/
+For Windows : https://cran.r-project.org/bin/windows/base/
+
+Now Download R-Studio. R-Studio is an IDE which helps you access R interactively. Alternatively you can use any other IDE like VS Code. Download the R-Studio - https://posit.co/download/rstudio-desktop/
+
 #Subsample 10000 read pairs from two large paired FASTQ files (remember to use the same random seed to keep pairing):
   seqtk sample -s100 RWB_R1_paired.fq.gz 17200000 | gzip > RWB_R1_5g_1.fq.gz
   seqtk sample -s100 RWB_R2_paired.fq.gz 17200000 | gzip > RWB_R2_5g_1.fq.gz
@@ -58,6 +112,20 @@ java -jar /home/jagativishwa/softs/Trimmomatic-0.39/trimmomatic-0.39.jar PE \
               -T RWB_5g_1_filtered_temp \
               ./RWB_5g_1_filtered.bam
 
+#remove PCR Duplicates
+java -jar -Xmx8g -jar /mnt/d/vishwa/psmc/softs/picard/build/libs/picard.jar MarkDuplicates \
+    MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=900 \
+    INPUT=RWB_5g_1_filtered_sorted.bam \
+    OUTPUT=RWB_5g_1_filtered_sorted_rmdup.bam \
+    ASSUME_SORTED=TRUE \
+    REMOVE_DUPLICATES=true \
+    METRICS_FILE=RWB_5g_1.rmdup.metrix.txt \
+    TMP_DIR=./ \
+    VALIDATION_STRINGENCY=SILENT
+
+
+#Index the final bam
+/mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools index RWB_5g_1_filtered_sorted_rmdup.bam
 
 
 
