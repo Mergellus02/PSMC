@@ -235,5 +235,26 @@ cut -f1 chromosome_scaffolds_aut.txt | grep -f - length_of_each_scaffold_of_ath_
 #Retain data mapping only to Autosomal chromosomes from the reference
 /mnt/d/vishwa/psmc/softs/samtools-1.18/bin/samtools view -b -L autosomal_chromosome_RWB.bed RWB_5g_1_filtered_sorted_rmdup.bam > RWB_5g_1_filtered_sorted_rmdup_aut.bam
 
+#Creating consensus file
+/usr/local/bin/bin/bcftools mpileup -C50 -f ~/PSMC_Tut/mapping/Athene_cunicularia.athCun1.dna.toplevel.fa ./JO_filtered_sorted_rmdup_aut.bam | /usr/local/bin/bin/bcftools call -c - | /usr/local/bin/bin/vcfutils.pl vcf2fq -d 10 -D 100 | gzip > JO_diploid.fq.gz
 
+#Let us first convert the diploid genome to PSMC suitable format ``psmcfa``
+/home/app/psmc-master/utils/fq2psmcfa -q20 /home/jagativishwa/psmc/RWB/RWB_20g_diploid.fq.gz > RWB_20g_diploid.psmcfa 
+
+Running PSMC to get initial idea about how the parameters is panning out.
+/home/app/psmc-master/psmc -N25 -t9 -r5 -p "26*2+4+7+1" -o /home/jagativishwa/psmc/RWB/RWB_20g_diploid.psmc /home/jagativishwa/psmc/RWB/RWB_20g_diploid.psmcfa
+
+#Lets get something called PSMC History
+/home/app/psmc-master/utils/psmc2history.pl /home/jagativishwa/psmc/RWB/RWB_20g_diploid.psmc | /home/app/psmc-master/utils/history2ms.pl > ms-cmd-10_2.sh
+
+#Bootstrapping PSMC
+/home/app/psmc-master/utils/splitfa /home/jagativishwa/psmc/RWB/RWB_10g_2_diploid.psmcfa > /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_split.psmcfa
+
+seq 100 | parallel -j 40 "/home/app/psmc-master/psmc -N25 -t9 -r5 -b -p '26*2+4+7+1' -o /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_round-{}.psmc /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_split.psmcfa"
+
+cat /home/jagativishwa/psmc/RWB/RWB_10g_2_diploid.psmc /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_round-*.psmc > /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_combined.psmc
+
+#final text output
+/home/app/psmc-master/utils/psmc_plot.pl -S -R -u 7.33e-09 -g 2.58 /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_no_scaling /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid.psmc
+/home/app/psmc-master/utils/psmc_plot.pl -R -u 7.33e-09 -g 2.58 -pY50000 /home/jagativishwa/psmc/RWB/boots/final_output/RWB_10g_2_diploid /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_combined.psmc
 
