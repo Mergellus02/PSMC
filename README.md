@@ -137,8 +137,7 @@ java -jar -Xmx8g -jar /mnt/d/vishwa/psmc/softs/picard/build/libs/picard.jar Mark
 
 
 #BAMQC
-/mnt/d/vishwa/psmc/softs/qualimap_v2.3/qualimap bamqc -bam RWB_5g_1_filtered_sorted_rmdup.bam --java-mem-size=4G
-
+/home/jagativishwa/softs/qualimap_v2.3/qualimap bamqc -bam  /home/jagativishwa/psmc/RWB/RWB_10g_2_filtered_sorted_rmdup.bam --java-mem-size=4G
 
 **#If the ref is not chromosome level, the following are the steps!!
 #Length of each scaffold of the reference file
