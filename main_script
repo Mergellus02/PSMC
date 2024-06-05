@@ -256,3 +256,8 @@ cat /home/jagativishwa/psmc/RWB/RWB_10g_2_diploid.psmc /home/jagativishwa/psmc/R
 #final text output
 /home/app/psmc-master/utils/psmc_plot.pl -S -R -u 7.33e-09 -g 2.58 /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_no_scaling /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid.psmc
 /home/app/psmc-master/utils/psmc_plot.pl -R -u 7.33e-09 -g 2.58 -pY50000 /home/jagativishwa/psmc/RWB/boots/final_output/RWB_10g_2_diploid /home/jagativishwa/psmc/RWB/boots/RWB_10g_2_diploid_combined.psmc
+
+
+
+##coverting to unix format
+sed -i 's/\r//' /home/jagativishwa/commands/03_summarise_Blast.sh
