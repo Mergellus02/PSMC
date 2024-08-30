@@ -1,3 +1,7 @@
+#sha256sum (sha256sum file should be edited with our fastq.gz path)
+sha256sum -c /path/to/sha256sum_file
+
+
 #hpc account_free space
 du -h --max-depth=1
 
