@@ -22,7 +22,7 @@ cd bwa; make
 
 7) Samtools and htslib suit, You don’t hae to get the htslib separately.
 wget https://github.com/samtools/samtools/releases/download/1.18/samtools-1.18.tar.bz2
-tar -xvzf samtools-1.18.tar.bz2 && cd samtools-1.18
+tar -xvjf samtools-1.18.tar.bz2 && cd samtools-1.18
 ./configure --prefix=/your/soft/path/name/
 make
 make install
