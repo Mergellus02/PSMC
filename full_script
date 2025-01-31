@@ -267,3 +267,9 @@ cat /home/jagativishwa/psmc/RWB/RWB_10g_2_diploid.psmc /home/jagativishwa/psmc/R
 
 ##coverting to unix format
 sed -i 's/\r//' /home/jagativishwa/commands/03_summarise_Blast.sh
+
+
+
+##samtools flagstat for mapping stats
+~/softs/samtools-1.18/samtools flagstat YBB3_30x_BHB_ref.bam > flagstat_output.txt
+
